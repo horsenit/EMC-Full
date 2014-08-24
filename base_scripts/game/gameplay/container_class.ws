@@ -578,10 +578,11 @@ class CContainer extends CGameplayEntity
 	function SetVisualsFull()
 	{
 		ApplyAppearance( "1_full" );
-		PlayEffect('medalion_detection_fx');
+		if (theHud.emc.containerGlow)
+			PlayEffect('medalion_detection_fx');
 		PlayEffect( 'glow' );
 		QuestItemGlow();
-		isHighlightedByMedallion = false;
+		isHighlightedByMedallion = !theHud.emc.containerGlow;
 	}
 	
 	function SetVisualsEmpty()

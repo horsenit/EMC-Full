@@ -1159,8 +1159,14 @@ import class CGuiMainMenu extends CGuiPanel
 		
 	private final function FillEmcOptions( AS_MenuItems : int )
 	{
+		var text : string;
+
 		// container_class.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_CONTAINERGLOW, "Containers always glow", theHud.emc.containerGlow );
+		text = "Containers always glow";
+		if (inGame)
+			text = text + " (requires reload of a save)";
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_CONTAINERGLOW, text, theHud.emc.containerGlow );
+
 		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_AUTOLOOT, "Auto loot 0 weight items", theHud.emc.autoLoot );
 
 		// cstakedown.ws
