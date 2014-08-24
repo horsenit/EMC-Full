@@ -126,6 +126,8 @@ enum EMainMenuState
 	MM_USER_CONTENT,
 	MM_USER_CONTENT_DIFF,
 	//dex--
+
+	MM_EMC_OPTIONS,
 }
 
 enum EMenuButtons
@@ -200,6 +202,19 @@ enum EMenuButtons
 	//dex++
 	MM_BTN_USER_CONTENT_MENU,
 	//dex--
+
+	// EMC
+	MM_BTN_EMCOPTIONS,
+
+	MM_EMC_ONOFF_CONTAINERGLOW,
+	MM_EMC_ONOFF_AUTOLOOT,
+	MM_EMC_ONOFF_FINISHER,
+	MM_EMC_ONOFF_DESCRIPTIONS,
+	MM_EMC_ONOFF_TAGGING,
+	MM_EMC_ONOFF_POKERCHEAT,
+	MM_EMC_SLID_BODIES,
+	MM_EMC_ONOFF_DARK,
+	MM_EMC_ONOFF_DRINK
 } 
 
 // Must be the same in Flash
@@ -311,6 +326,11 @@ import class CGuiMainMenu extends CGuiPanel
 	//dex++: user content
 	private var userContentLevelPath : string;
 	//dex--
+
+	private var defaultYInitialized : bool;
+	private var defaultYPosition : float;
+	private var defaultScrollXOffset : float;
+	default defaultYInitialized = false;
 
 	////////////////////////////////////////////////////
 
@@ -444,6 +464,7 @@ import class CGuiMainMenu extends CGuiPanel
 			case MM_OPTIONS:
 			case MM_EXTRAS:
 			case MM_IMPORT_OR_NEW:
+			case MM_EMC_OPTIONS:
 			{
 				menuState = MM_MAIN;
 				Refill();
@@ -607,6 +628,7 @@ import class CGuiMainMenu extends CGuiPanel
 		var AS_menuItems : int;
 		var keyboard : string;
 		var pad : string;
+		var dy : float;
 
 		if ( ! theHud.GetObject( "MainItems", AS_menuItems, AS_menuData ) )
 		{
@@ -727,6 +749,28 @@ import class CGuiMainMenu extends CGuiPanel
 				FillImportOrNew( AS_menuItems );
 				break;
 			}
+			case MM_EMC_OPTIONS:
+			{
+				FillEmcOptions( AS_menuItems );
+				if (!defaultYInitialized)
+				{
+					theHud.GetFloat("pPanelClass.m_iDefaultYListPosition", dy);
+					defaultYPosition = dy;
+					theHud.GetFloat("pPanelClass.mc_mainList.m_mcScroll._x", dy);
+					defaultScrollXOffset = dy;
+					defaultYInitialized = true;
+				}
+				theHud.SetFloat("pPanelClass.m_iDefaultYListPosition", 200.0f);
+				theHud.SetFloat("pPanelClass.mc_mainList.m_mcScroll._x", defaultScrollXOffset - 29);
+				break;
+			}
+		}
+
+		// workaround to avoid problems with how much larger the option list entries are compared to regular menu
+		if (menuState != MM_EMC_OPTIONS && defaultYInitialized)
+		{
+			theHud.SetFloat("pPanelClass.m_iDefaultYListPosition", defaultYPosition);
+			theHud.SetFloat("pPanelClass.mc_mainList.m_mcScroll._x", defaultScrollXOffset);
 		}
 		
 		if ( menuState != MM_LOAD_GAME )
@@ -769,6 +813,7 @@ import class CGuiMainMenu extends CGuiPanel
 		}
 		InsertMenuButton( AS_MenuItems, MM_BTN_LOAD_GAME, StrUpperUTF( GetLocStringByKeyExt( "menuLoad" ) ), StrUpperUTF( GetLocStringByKeyExt( "menuLoad_t" ) ) );
 		InsertMenuButton( AS_MenuItems, MM_BTN_OPTIONS, StrUpperUTF( GetLocStringByKeyExt( "menuSettings" ) ), StrUpperUTF( GetLocStringByKeyExt( "menuSettings_t" ) ) );
+		InsertMenuButton( AS_MenuItems, MM_BTN_EMCOPTIONS, "EMC Options", "Adjust EMC Settings" );
 		InsertMenuButton( AS_MenuItems, MM_BTN_EXIT_GAME, StrUpperUTF( GetLocStringByKeyExt( "menuExitCurrentGame" ) ), StrUpperUTF( GetLocStringByKeyExt( "menuExitCurrentGame_t" ) ) );
 	}
 	
@@ -784,6 +829,7 @@ import class CGuiMainMenu extends CGuiPanel
 			InsertMenuButton( AS_MenuItems, MM_BTN_LOAD_CHAPTER, "< DEBUG > Chapters", "Not in final game" );
 		}
 		InsertMenuButton( AS_MenuItems, MM_BTN_OPTIONS, StrUpperUTF( GetLocStringByKeyExt( "menuSettings" ) ), StrUpperUTF( GetLocStringByKeyExt( "menuSettings_t" ) ) );
+		InsertMenuButton( AS_MenuItems, MM_BTN_EMCOPTIONS, "EMC Options", "Adjust EMC Settings" );
 		InsertMenuButton( AS_MenuItems, MM_BTN_EXTRAS, StrUpperUTF( GetLocStringByKeyExt( "menuExtras" ) ), StrUpperUTF( GetLocStringByKeyExt( "menuExtras_t" ) ) );
 		InsertMenuButton( AS_MenuItems, MM_BTN_QUIT, StrUpperUTF( GetLocStringByKeyExt( "menuQuit" ) ), StrUpperUTF( GetLocStringByKeyExt( "menuQuit_t" ) ) );
 	}
@@ -1105,6 +1151,39 @@ import class CGuiMainMenu extends CGuiPanel
 		ReadFlashbacks();
 	}
 		
+	private final function FillEmcOptions( AS_MenuItems : int )
+	{
+		// container_class.ws
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_CONTAINERGLOW, "Containers always glow", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_AUTOLOOT, "Auto loot 0 weight items", 1 );
+
+		// cstakedown.ws
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_FINISHER, "Only use finisher if fighting one enemy", 1 );
+
+		// guiCharacter.ws
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DESCRIPTIONS, "Display details for unacquired talents", 1 );
+
+		// guiElixirs.ws
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DRINK, "Skip potion drinking animation", 1 );
+
+		// guiUtils.ws
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_TAGGING, "Show item tag prefixes", 1 );
+
+		// dicePoker.ws
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_POKERCHEAT, "Win dice poker by throwing off table", 1 );
+
+		// dead.ws
+		InsertMenuSlider( AS_MenuItems, MM_EMC_SLID_BODIES, "Minutes until bodies disappear (default 2)", 0, 10, 2 );
+
+		// player.ws
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DARK, "Disable Dark Mode effect if set is complete", 1 );
+
+		// TODO: delete meeeee
+		InsertMenuButton( AS_MenuItems, 404, "Test item to show scrollbar", "this isnt displayed on an options menu!!" );
+
+		InsertMenuButton( AS_MenuItems, MM_BTN_BACK, StrUpperUTF( GetLocStringByKeyExt( "menuBack" ) ), StrUpperUTF( GetLocStringByKeyExt( "menuBack_t" ) ) );
+	}
+
 	event OnFlashbacksLoaded()
 	{
 		var i			 : int;
@@ -1205,6 +1284,12 @@ import class CGuiMainMenu extends CGuiPanel
 				ClosePanel();
 				break;
 			}
+			case MM_BTN_EMCOPTIONS:
+			{
+				menuState = MM_EMC_OPTIONS;
+				Refill();
+				break;
+			}
 		}
 	}
 	
@@ -1264,6 +1349,12 @@ import class CGuiMainMenu extends CGuiPanel
 			case MM_BTN_QUIT:
 			{
 				QuitApplication();
+				break;
+			}
+			case MM_BTN_EMCOPTIONS:
+			{
+				menuState = MM_EMC_OPTIONS;
+				Refill();
 				break;
 			}
 		}
@@ -1950,6 +2041,19 @@ import class CGuiMainMenu extends CGuiPanel
 		}
 	}
 
+	private final function InputEmcOptions( item : int, value : float )
+	{
+		switch( item )
+		{
+			case MM_BTN_BACK:
+			{
+				menuState = MM_MAIN;
+				Refill();
+				return;
+			}
+		}
+	}
+
 	////////////////// ACTUATORS ///////////////////////////
 	
 	private final function ExitGame()
@@ -2203,6 +2307,11 @@ import class CGuiMainMenu extends CGuiPanel
 			case MM_IMPORT_OR_NEW:
 			{
 				InputImportOrNew( ( int ) item );
+				break;
+			}
+			case MM_EMC_OPTIONS:
+			{
+				InputEmcOptions( ( int ) item, value );
 				break;
 			}
 		}
