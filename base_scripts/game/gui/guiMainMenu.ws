@@ -464,7 +464,6 @@ import class CGuiMainMenu extends CGuiPanel
 			case MM_OPTIONS:
 			case MM_EXTRAS:
 			case MM_IMPORT_OR_NEW:
-			case MM_EMC_OPTIONS:
 			{
 				menuState = MM_MAIN;
 				Refill();
@@ -517,6 +516,13 @@ import class CGuiMainMenu extends CGuiPanel
 				menuState = MM_EXTRAS;
 				theHud.Invoke( "pPanelClass.StopVideo" );
 				theHud.ShowMenuBeforeGame( MM_EXTRAS );
+				return true;
+			}
+			case MM_EMC_OPTIONS:
+			{
+				theHud.emc.WriteSettings();
+				menuState = MM_MAIN;
+				Refill();
 				return true;
 			}
 		}
@@ -1154,29 +1160,29 @@ import class CGuiMainMenu extends CGuiPanel
 	private final function FillEmcOptions( AS_MenuItems : int )
 	{
 		// container_class.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_CONTAINERGLOW, "Containers always glow", 1 );
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_AUTOLOOT, "Auto loot 0 weight items", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_CONTAINERGLOW, "Containers always glow", theHud.emc.containerGlow );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_AUTOLOOT, "Auto loot 0 weight items", theHud.emc.autoLoot );
 
 		// cstakedown.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_FINISHER, "Only use finisher if fighting one enemy", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_FINISHER, "Only use finisher if fighting one enemy", theHud.emc.finisher );
 
 		// guiCharacter.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DESCRIPTIONS, "Display details for unacquired talents", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DESCRIPTIONS, "Display details for unacquired talents", theHud.emc.talentDesc );
 
 		// guiElixirs.ws
 		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DRINK, "Skip potion drinking animation", 1 );
 
 		// guiUtils.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_TAGGING, "Show item tag prefixes", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_TAGGING, "Show item tag prefixes", theHud.emc.itemTag );
 
 		// dicePoker.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_POKERCHEAT, "Win dice poker by throwing off table", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_POKERCHEAT, "Win dice poker by throwing off table", theHud.emc.pokerCheat );
 
 		// dead.ws
-		InsertMenuSlider( AS_MenuItems, MM_EMC_SLID_BODIES, "Minutes until bodies disappear (default 2)", 0, 10, 2 );
+		InsertMenuSlider( AS_MenuItems, MM_EMC_SLID_BODIES, "Minutes until bodies disappear (default 2)", 0, 10, ClampF( theHud.emc.bodyTimer, 0, 10 ) );
 
 		// player.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DARK, "Disable Dark Mode effect if set is complete", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DARK, "Disable Dark Mode effect if set is complete", theHud.emc.darkEffect );
 
 		// TODO: delete meeeee
 		InsertMenuButton( AS_MenuItems, 404, "Test item to show scrollbar", "this isnt displayed on an options menu!!" );
@@ -2043,12 +2049,57 @@ import class CGuiMainMenu extends CGuiPanel
 
 	private final function InputEmcOptions( item : int, value : float )
 	{
+		var hud     : CHudInstance;
+		hud = theHud;
 		switch( item )
 		{
 			case MM_BTN_BACK:
 			{
-				menuState = MM_MAIN;
-				Refill();
+				Exit();
+				return;
+			}
+			case MM_EMC_ONOFF_CONTAINERGLOW:
+			{
+				hud.emc.containerGlow = value == 1.0f;
+				return;
+			}
+			case MM_EMC_ONOFF_AUTOLOOT:
+			{
+				hud.emc.autoLoot = value == 1.0f;
+				return;
+			}
+			case MM_EMC_ONOFF_FINISHER:
+			{
+				hud.emc.finisher = value == 1.0f;
+				return;
+			}
+			case MM_EMC_ONOFF_DESCRIPTIONS:
+			{
+				hud.emc.talentDesc = value == 1.0f;
+				return;
+			}
+			case MM_EMC_ONOFF_DRINK:
+			{
+				return;
+			}
+			case MM_EMC_ONOFF_TAGGING:
+			{
+				hud.emc.itemTag = value == 1.0f;
+				return;
+			}
+			case MM_EMC_ONOFF_POKERCHEAT:
+			{
+				hud.emc.pokerCheat = value == 1.0f;
+				return;
+			}
+			case MM_EMC_SLID_BODIES:
+			{
+				hud.emc.bodyTimer = (float) RoundFEx(value);
+				return;
+			}
+			case MM_EMC_ONOFF_DARK:
+			{
+				hud.emc.darkEffect = value == 1.0f;
 				return;
 			}
 		}

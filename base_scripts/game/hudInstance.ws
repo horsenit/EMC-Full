@@ -109,6 +109,9 @@ import class CHudInstance extends CFlashInstance
 	
 	private var m_isGuiVisible : bool;
 	default m_isGuiVisible = true;
+
+	// EMC
+	var emc : EMCSettings;
 	
 	final function SetMeditationTransitions(firstTrans:name, secondTrans:name)
 	{
@@ -137,7 +140,10 @@ import class CHudInstance extends CFlashInstance
 		m_mapCommon		= new CGuiMapCommon in this;
 		m_arena 		= NULL;
 		m_controls 		= NULL;
+		emc				= new EMCSettings	in this;
 		
+		emc.ReadSettings();
+
 		m_meditationTrans = BEH_TRANS_IDLE;
 		m_meditationTransSecond = '';
 		m_panelSwitch = "";
