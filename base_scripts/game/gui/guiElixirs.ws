@@ -35,13 +35,17 @@ class CGuiElixirs extends CGuiPanel
 		var itemCount : int;
 		
 		itemCount = theHud.m_utils.m_itemBag.Size();
-		//play drink effect	
-		if ( itemCount == 1)
-			theHud.SetMeditationTransitions(theHud.BEH_TRANS_DRINK,theHud.BEH_TRANS_EFFECT1);
-		else if (itemCount == 2)
-			theHud.SetMeditationTransitions(theHud.BEH_TRANS_DRINK,theHud.BEH_TRANS_EFFECT2);
-		else if (itemCount >= 3)
-			theHud.SetMeditationTransitions(theHud.BEH_TRANS_DRINK,theHud.BEH_TRANS_EFFECT3);
+
+		if (!theHud.emc.skipDrink)
+		{
+			//play drink effect	
+			if ( itemCount == 1)
+				theHud.SetMeditationTransitions(theHud.BEH_TRANS_DRINK,theHud.BEH_TRANS_EFFECT1);
+			else if (itemCount == 2)
+				theHud.SetMeditationTransitions(theHud.BEH_TRANS_DRINK,theHud.BEH_TRANS_EFFECT2);
+			else if (itemCount >= 3)
+				theHud.SetMeditationTransitions(theHud.BEH_TRANS_DRINK,theHud.BEH_TRANS_EFFECT3);
+		}
 		
 		theSound.RestoreAllSounds();
 		

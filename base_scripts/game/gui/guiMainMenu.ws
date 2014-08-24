@@ -1176,7 +1176,7 @@ import class CGuiMainMenu extends CGuiPanel
 		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DESCRIPTIONS, "Display details for unacquired talents", theHud.emc.talentDesc );
 
 		// guiElixirs.ws
-		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DRINK, "Skip potion drinking animation", 1 );
+		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_DRINK, "Skip potion drinking animation", theHud.emc.skipDrink );
 
 		// guiUtils.ws
 		InsertMenuOnOff( AS_MenuItems, MM_EMC_ONOFF_TAGGING, "Show item tag prefixes", theHud.emc.itemTag );
@@ -2086,6 +2086,7 @@ import class CGuiMainMenu extends CGuiPanel
 			}
 			case MM_EMC_ONOFF_DRINK:
 			{
+				hud.emc.skipDrink = value == 1.0f;
 				return;
 			}
 			case MM_EMC_ONOFF_TAGGING:

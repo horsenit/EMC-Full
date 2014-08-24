@@ -17,6 +17,8 @@ class EMCSettings
 	default bodyTimer = 5.0f;
 	public var darkEffect : bool;
 	default darkEffect = true;
+	public var skipDrink : bool;
+	default skipDrink = true;
 
 	function ReadSettings()
 	{
@@ -54,6 +56,10 @@ class EMCSettings
 		{
 			darkEffect = value == 1.0f;
 		}
+		if ( theGame.ReadConfigParamFloat( "User", "EMC", "SkipDrinkAnimation", value ) )
+		{
+			skipDrink = value == 1.0f;
+		}
 	}
 
 	function WriteSettings()
@@ -66,5 +72,6 @@ class EMCSettings
 		theGame.WriteConfigParamFloat( "User", "EMC", "PokerCheat", (float)pokerCheat );
 		theGame.WriteConfigParamFloat( "User", "EMC", "BodyTimer", bodyTimer );
 		theGame.WriteConfigParamFloat( "User", "EMC", "DarkEffect", (float)darkEffect );
+		theGame.WriteConfigParamFloat( "User", "EMC", "SkipDrinkAnimation", (float)skipDrink );
 	}
 };
