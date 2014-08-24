@@ -69,8 +69,8 @@ import class CGuiUtils extends CObject
 	}
 	
 	function GetItemNameTagged( inventory : CInventoryComponent, tagItemName : string ) : string {
-		var tagItemId : SItemUniqueId = inventory.AddItem( StringToName( tagItemName ), 1, false );
-		var tagItemCategory : name = inventory.GetItemCategory( tagItemId );
+		var tagItemId : SItemUniqueId;
+		var tagItemCategory : name;
 		var tagItemTags : array< name >;
 		var tagLocTag : string = "";
 		var tagLocNameTagged : string = "";
@@ -79,6 +79,12 @@ import class CGuiUtils extends CObject
 		var tagCreatedName : name;
 		var tagCreatedItem : bool = false;
 		
+		if (!theHud.emc.itemTag)
+			return GetLocStringByKeyExt( tagItemName );
+
+		tagItemId = inventory.AddItem( StringToName( tagItemName ), 1, false );
+		tagItemCategory = inventory.GetItemCategory( tagItemId );
+
 		inventory.GetItemTags( tagItemId, tagItemTags );
 		
 		if ( tagItemCategory == 'schematic' ) {
