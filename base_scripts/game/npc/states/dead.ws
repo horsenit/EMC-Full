@@ -272,6 +272,7 @@ state Dead in CNewNPC extends Base
 	entry function StateDestruct( optional deathData : SActorDeathData, optional dontDropItems : bool )
 	{
 		var i : int;
+		var count : int;
 		i = 0;
 		
 		if ( !dontDropItems )
@@ -291,6 +292,8 @@ state Dead in CNewNPC extends Base
 		else
 		{
 			Sleep( 5.0f );
+
+			count = Clamp( (int)(theHud.emc.bodyTimer), 15, 900 );
 			
 			// EMC - Longer delay before corpse rot
 			if ( theGame.GetIsPlayerOnArena() ) {
@@ -299,7 +302,7 @@ state Dead in CNewNPC extends Base
 					i+=1;
 				}
 			} else {
-				while( !parent.CanBeDesctructed() || i < 300 ) {
+				while( !parent.CanBeDesctructed() || i < count ) {
 					Sleep(1.0);
 					i+=1;
 				}
