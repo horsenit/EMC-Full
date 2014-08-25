@@ -828,7 +828,7 @@ import class W2MinigameDicePoker extends CMinigame
 		{
 			value = values[ i ];
 			
-			if ( figure == MinigameDicePokerResult_None ) {
+			if ( theHud.emc.pokerCheat && figure == MinigameDicePokerResult_None ) {
 				figure = MinigameDicePokerResult_Poker;
 			}
 			
