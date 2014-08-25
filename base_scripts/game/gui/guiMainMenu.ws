@@ -2101,7 +2101,7 @@ import class CGuiMainMenu extends CGuiPanel
 			}
 			case MM_EMC_SLID_BODIES:
 			{
-				hud.emc.bodyTimer = (float) RoundFEx(value);
+				hud.emc.bodyTimer = ((float) RoundFEx(value)) * 60.0f;
 				return;
 			}
 			case MM_EMC_ONOFF_DARK:

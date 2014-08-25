@@ -14,7 +14,7 @@ class EMCSettings
 	public var pokerCheat : bool;
 	default pokerCheat = true;
 	public var bodyTimer : float;
-	default bodyTimer = 5.0f;
+	default bodyTimer = 300.0f;
 	public var darkEffect : bool;
 	default darkEffect = true;
 	public var skipDrink : bool;
