@@ -47,35 +47,53 @@ class CContainer extends CGameplayEntity
 	event OnSpawned( spawnData : SEntitySpawnData ) 
 	{
 		this.GetInventory().UpdateLoot();
-		if ( IsLootable() )
-		{
-			if ( isDynamic ) {
-				sourceInv = this.GetInventory();
-				targetInv = thePlayer.GetInventory();
-				
-				sourceInv.GetAllItems( allItems );
-				
-				for ( i = allItems.Size()-1; i >= 0; i-=1 )
-				{
-					itemId = allItems[i];
-					if ( sourceInv.GetItemAttributeAdditive( itemId, 'item_weight' ) == 0  && ! sourceInv.ItemHasTag(itemId, 'Quest') ) {
-						if ( AllowItemDarkDiff( sourceInv, itemId ) ) Helper_TransferItemFromContainerToPlayer( itemId, targetInv, sourceInv, isDynamic );	
-						theSound.PlaySound( "gui/hud/itemlooted" );
+		if ( theHud.emc.autoLoot ) {
+			if ( IsLootable() )
+			{
+				if ( isDynamic ) {
+					sourceInv = this.GetInventory();
+					targetInv = thePlayer.GetInventory();
+					
+					sourceInv.GetAllItems( allItems );
+					
+					for ( i = allItems.Size()-1; i >= 0; i-=1 )
+					{
+						itemId = allItems[i];
+						if ( sourceInv.GetItemAttributeAdditive( itemId, 'item_weight' ) == 0  && ! sourceInv.ItemHasTag(itemId, 'Quest') ) {
+							if ( AllowItemDarkDiff( sourceInv, itemId ) ) Helper_TransferItemFromContainerToPlayer( itemId, targetInv, sourceInv, isDynamic );	
+							theSound.PlaySound( "gui/hud/itemlooted" );
+						}
 					}
 				}
 			}
-		}
-		
-		if ( ! IsLootable() ) {
-			SetVisualsEmpty();
-			DestroyIt();
-			GetComponent("Loot").SetEnabled( false );
-			HideLootWindow();
-		} else {
-			SetVisualsFull();
 			
-			if (!isNotEnabledOnSpawn) {
-				GetComponent("Loot").SetEnabled( true );
+			if ( ! IsLootable() ) {
+				SetVisualsEmpty();
+				DestroyIt();
+				GetComponent("Loot").SetEnabled( false );
+				HideLootWindow();
+			} else {
+				SetVisualsFull();
+				
+				if (!isNotEnabledOnSpawn) {
+					GetComponent("Loot").SetEnabled( true );
+				}
+			}
+		}
+		else { // lazy way to deal with auto loot logic (below is vanilla)
+			if ( IsLootable() )
+			{
+				SetVisualsFull();
+				
+				if (!isNotEnabledOnSpawn)
+				{
+					GetComponent("Loot").SetEnabled( true );
+				}
+			}
+			else
+			{
+				SetVisualsEmpty();
+				GetComponent("Loot").SetEnabled( false );
 			}
 		}
 	}
